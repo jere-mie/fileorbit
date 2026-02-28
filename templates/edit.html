@@ -1,0 +1,109 @@
+{{define "title"}}FileOrbit · Edit · {{.File.Filename}}{{end}}
+{{define "content"}}
+<div class="app-layout">
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <a href="/dashboard" class="brand-link">
+                <span class="brand-icon">◉</span>
+                <span class="brand-text">File<span class="accent">Orbit</span></span>
+            </a>
+        </div>
+        <div class="top-bar-right">
+            <a href="/dashboard" class="btn btn-ghost btn-sm">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="page-container">
+            <div class="page-header">
+                <span class="file-type-badge file-type-badge-lg">{{fileExt .File.Filename}}</span>
+                <div>
+                    <h2 class="page-title">Edit File</h2>
+                    <p class="page-subtitle">{{.File.Filename}}</p>
+                </div>
+            </div>
+
+            {{if .Error}}
+            <div class="alert alert-error">{{.Error}}</div>
+            {{end}}
+            {{if .Success}}
+            <div class="alert alert-success">{{.Success}}</div>
+            {{end}}
+
+            <form method="POST" action="/dashboard/files/{{.File.ID}}/edit" class="edit-form">
+                <div class="form-section">
+                    <h3 class="form-section-title">FILE DETAILS</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="filename">FILENAME</label>
+                            <input type="text" id="filename" name="filename" value="{{.File.Filename}}">
+                        </div>
+                        <div class="input-group">
+                            <label for="custom-url">CUSTOM URL</label>
+                            <div class="input-with-prefix">
+                                <span class="input-prefix">{{.BaseURL}}/</span>
+                                <input type="text" id="custom-url" name="custom_url" value="{{.File.CustomURL}}">
+                            </div>
+                        </div>
+                        <div class="input-group full-width">
+                            <label for="description">DESCRIPTION</label>
+                            <input type="text" id="description" name="description" value="{{.File.Description}}" placeholder="Optional description">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">SECURITY & EXPIRATION</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="password">PASSWORD</label>
+                            <input type="password" id="password" name="password" placeholder="Leave empty to keep current">
+                            {{if .File.PasswordHash.Valid}}
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="remove_password" value="on">
+                                <span>Remove password protection</span>
+                            </label>
+                            {{end}}
+                        </div>
+                        <div class="input-group">
+                            <label for="expires-at">EXPIRATION</label>
+                            <input type="datetime-local" id="expires-at" name="expires_at"
+                                {{if .File.ExpiresAt.Valid}}value="{{.File.ExpiresAt.Time.Format "2006-01-02T15:04"}}"{{end}}>
+                            {{if .File.ExpiresAt.Valid}}
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="remove_expiry" value="on">
+                                <span>Remove expiration</span>
+                            </label>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-info-grid">
+                    <div class="info-card">
+                        <span class="info-label">TYPE</span>
+                        <span class="info-value">{{.File.ContentType}}</span>
+                    </div>
+                    <div class="info-card">
+                        <span class="info-label">SIZE</span>
+                        <span class="info-value">{{formatBytes .File.Size}}</span>
+                    </div>
+                    <div class="info-card">
+                        <span class="info-label">DOWNLOADS</span>
+                        <span class="info-value">{{.File.DownloadCount}}</span>
+                    </div>
+                    <div class="info-card">
+                        <span class="info-label">UPLOADED</span>
+                        <span class="info-value">{{formatDate .File.CreatedAt}}</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">SAVE CHANGES →</button>
+                    <a href="/dashboard" class="btn btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+{{end}}

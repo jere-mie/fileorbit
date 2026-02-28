@@ -1,0 +1,138 @@
+{{define "title"}}FileOrbit · Dashboard{{end}}
+{{define "content"}}
+<div class="app-layout">
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <a href="/dashboard" class="brand-link">
+                <span class="brand-icon">◉</span>
+                <span class="brand-text">File<span class="accent">Orbit</span></span>
+            </a>
+        </div>
+        <div class="top-bar-center">
+            <div class="search-wrap">
+                <span class="search-icon">⌕</span>
+                <input type="text" id="search-input" placeholder="Search files…" class="search-input" autocomplete="off">
+            </div>
+        </div>
+        <div class="top-bar-right">
+            <a href="/logout" class="btn btn-ghost btn-sm">Logout</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {{if .Success}}
+        <div class="alert alert-success" id="success-alert">✓ {{.Success}}</div>
+        {{end}}
+        {{if .Error}}
+        <div class="alert alert-error">{{.Error}}</div>
+        {{end}}
+
+        <!-- Upload Section -->
+        <section class="upload-section">
+            <form method="POST" action="/dashboard/upload" enctype="multipart/form-data" id="upload-form">
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-zone-content">
+                        <div class="upload-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <p class="upload-text">Drop files here or <label for="file-input" class="upload-link">browse</label></p>
+                        <p class="upload-hint">Maximum file size: {{formatBytes .MaxFileSize}}</p>
+                    </div>
+                    <input type="file" id="file-input" name="file" class="sr-only">
+                </div>
+
+                <div class="upload-options" id="upload-options">
+                    <div class="upload-file-preview" id="upload-file-preview"></div>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="custom-url">CUSTOM URL</label>
+                            <div class="input-with-prefix">
+                                <span class="input-prefix">{{.BaseURL}}/</span>
+                                <input type="text" id="custom-url" name="custom_url" placeholder="auto-generated">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="description">DESCRIPTION</label>
+                            <input type="text" id="description" name="description" placeholder="Optional description">
+                        </div>
+                        <div class="input-group">
+                            <label for="upload-password">PASSWORD PROTECT</label>
+                            <input type="password" id="upload-password" name="password" placeholder="Leave empty for no password">
+                        </div>
+                        <div class="input-group">
+                            <label for="expires-at">EXPIRATION</label>
+                            <input type="datetime-local" id="expires-at" name="expires_at">
+                        </div>
+                    </div>
+                    <div class="upload-actions">
+                        <button type="submit" class="btn btn-primary" id="upload-btn">
+                            <span class="btn-text">UPLOAD FILE →</span>
+                            <span class="btn-loading" style="display:none">UPLOADING…</span>
+                        </button>
+                        <button type="button" class="btn btn-ghost" id="upload-cancel">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Files Grid -->
+        <section class="files-section">
+            <div class="section-header">
+                <h2 class="section-title">FILES</h2>
+                <span class="file-count">{{len .Files}}</span>
+            </div>
+
+            <div class="files-grid" id="files-grid">
+                {{range .Files}}
+                <div class="file-card" data-filename="{{.Filename}}" data-description="{{.Description}}" data-url="{{.CustomURL}}">
+                    <div class="file-card-header">
+                        <span class="file-type-badge">{{fileExt .Filename}}</span>
+                        <div class="file-badges">
+                            {{if .PasswordHash.Valid}}<span class="badge badge-locked" title="Password Protected">🔒</span>{{end}}
+                            {{if .ExpiresAt.Valid}}<span class="badge badge-expires" title="Expires {{formatDateTime .ExpiresAt.Time}}">⏱</span>{{end}}
+                        </div>
+                    </div>
+                    <div class="file-card-body">
+                        <h3 class="file-name" title="{{.Filename}}">{{truncate .Filename 30}}</h3>
+                        {{if .Description}}<p class="file-desc">{{truncate .Description 55}}</p>{{end}}
+                        <div class="file-meta">
+                            <span>{{formatBytes .Size}}</span>
+                            <span class="meta-dot">·</span>
+                            <span>{{.DownloadCount}} downloads</span>
+                        </div>
+                    </div>
+                    <div class="file-url-row">
+                        <code class="file-url-text" title="{{$.BaseURL}}/{{.CustomURL}}">{{truncate .CustomURL 28}}</code>
+                        <button class="btn-icon" onclick="copyToClipboard('{{$.BaseURL}}/{{.CustomURL}}')" title="Copy link">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                    <div class="file-card-actions">
+                        <a href="/dashboard/files/{{.ID}}/analytics" class="btn btn-xs btn-ghost">Analytics</a>
+                        <a href="/dashboard/files/{{.ID}}/edit" class="btn btn-xs btn-ghost">Edit</a>
+                        <form method="POST" action="/dashboard/files/{{.ID}}/delete" class="inline-form" onsubmit="return confirm('Permanently delete this file?')">
+                            <button type="submit" class="btn btn-xs btn-danger-ghost">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <p class="empty-text">No files yet</p>
+                    <p class="empty-hint">Upload your first file using the area above</p>
+                </div>
+                {{end}}
+            </div>
+        </section>
+    </main>
+</div>
+{{end}}

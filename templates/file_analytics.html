@@ -1,0 +1,123 @@
+{{define "title"}}FileOrbit · Analytics · {{.File.Filename}}{{end}}
+{{define "content"}}
+<div class="app-layout">
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <a href="/dashboard" class="brand-link">
+                <span class="brand-icon">◉</span>
+                <span class="brand-text">File<span class="accent">Orbit</span></span>
+            </a>
+        </div>
+        <div class="top-bar-right">
+            <a href="/dashboard" class="btn btn-ghost btn-sm">← Back to Dashboard</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="page-container">
+            <div class="page-header">
+                <span class="file-type-badge file-type-badge-lg">{{fileExt .File.Filename}}</span>
+                <div>
+                    <h2 class="page-title">Analytics</h2>
+                    <p class="page-subtitle">{{.File.Filename}}</p>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{.File.DownloadCount}}</div>
+                    <div class="stat-label">TOTAL DOWNLOADS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{len .Referrers}}</div>
+                    <div class="stat-label">TRAFFIC SOURCES</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{formatBytes .File.Size}}</div>
+                    <div class="stat-label">FILE SIZE</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{formatDate .File.CreatedAt}}</div>
+                    <div class="stat-label">UPLOADED</div>
+                </div>
+            </div>
+
+            <!-- Daily Downloads Chart -->
+            {{if .Daily}}
+            <div class="chart-section">
+                <h3 class="section-title">DOWNLOADS — LAST 30 DAYS</h3>
+                <div class="bar-chart">
+                    {{$maxCount := maxCount .Daily}}
+                    {{range .Daily}}
+                    <div class="bar-col">
+                        <div class="bar-tooltip">{{.Count}} downloads<br>{{.Date}}</div>
+                        <div class="bar" style="height: {{barHeight .Count $maxCount}}%"></div>
+                        <div class="bar-label">{{shortDate .Date}}</div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Referrers -->
+            {{if .Referrers}}
+            <div class="chart-section">
+                <h3 class="section-title">TRAFFIC SOURCES</h3>
+                <div class="referrers-list">
+                    {{range .Referrers}}
+                    <div class="referrer-row">
+                        <span class="referrer-name">{{truncate .Referrer 60}}</span>
+                        <div class="referrer-bar-wrap">
+                            <div class="referrer-bar" style="width: {{barHeight .Count (index $.Referrers 0).Count}}%"></div>
+                        </div>
+                        <span class="referrer-count">{{.Count}}</span>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Recent Downloads Table -->
+            {{if .Events}}
+            <div class="chart-section">
+                <h3 class="section-title">RECENT DOWNLOADS</h3>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>TIME</th>
+                                <th>REFERRER</th>
+                                <th>IP ADDRESS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .Events}}
+                            <tr>
+                                <td class="mono">{{formatDateTime .AccessedAt}}</td>
+                                <td>{{if .Referrer}}{{truncate .Referrer 50}}{{else}}<span class="text-muted">Direct</span>{{end}}</td>
+                                <td class="mono">{{.IPAddress}}</td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {{end}}
+
+            {{if and (not .Daily) (not .Events)}}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 005 0"/>
+                    </svg>
+                </div>
+                <p class="empty-text">No download data yet</p>
+                <p class="empty-hint">Analytics will appear after the first download</p>
+            </div>
+            {{end}}
+        </div>
+    </main>
+</div>
+{{end}}
