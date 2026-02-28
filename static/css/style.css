@@ -319,7 +319,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 
 /* ==========================================================================
-   Login Page
+   Login / Landing Page
    ========================================================================== */
 .login-page {
     display: flex;
@@ -327,41 +327,68 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.login-page::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(57, 255, 20, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: heroGlow 6s ease-in-out infinite alternate;
 }
 
-.login-container {
+@keyframes heroGlow {
+    0% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    100% { opacity: 1; transform: translateX(-50%) scale(1.15); }
+}
+
+.landing-container {
     width: 100%;
-    max-width: 380px;
-    animation: fadeInUp 0.5s ease;
+    max-width: 520px;
+    animation: fadeInUp 0.6s ease;
 }
 
-.login-brand {
+/* ---- Landing Hero ---- */
+.landing-hero {
     text-align: center;
-    margin-bottom: 36px;
+    margin-bottom: 44px;
 }
 
-.brand-title {
-    font-size: 2rem;
+.landing-title {
+    font-size: 2.8rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+    margin-bottom: 10px;
+    line-height: 1.1;
 }
 
-.login-subtitle {
+.landing-tagline {
     font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.25em;
-    color: var(--text-3);
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    color: var(--text-2);
     text-transform: uppercase;
 }
 
-/* Orbital Animation */
+/* ---- Orbital Animation (enhanced) ---- */
 .orbital-icon {
     position: relative;
     width: 64px;
     height: 64px;
     margin: 0 auto 20px;
 }
+.orbital-icon-lg {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 28px;
+}
+
 .orbit-ring {
     position: absolute;
     inset: 0;
@@ -371,23 +398,63 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     animation: orbitPulse 3s ease-in-out infinite;
 }
 .orbit-ring-2 {
-    inset: -8px;
+    inset: -10px;
     border-color: var(--info);
     opacity: 0.15;
     animation-delay: 1.5s;
     animation-duration: 4s;
 }
+.orbit-ring-3 {
+    inset: -22px;
+    border-color: var(--accent);
+    opacity: 0.08;
+    border-width: 1px;
+    border-style: dashed;
+    animation: orbitSpin 20s linear infinite;
+}
 .orbit-core {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background: var(--accent);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(57, 255, 20, 0.15);
     animation: corePulse 2s ease-in-out infinite;
+}
+
+.orbit-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent-glow);
+}
+.orbit-particle-1 {
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    animation: particleOrbit1 4s linear infinite;
+    transform-origin: 50% calc(48px);
+}
+.orbital-icon-lg .orbit-particle-1 {
+    transform-origin: 50% calc(48px);
+}
+.orbit-particle-2 {
+    top: 50%; right: -10px;
+    animation: particleFloat 3s ease-in-out infinite;
+    opacity: 0.6;
+    width: 3px; height: 3px;
+    background: var(--info);
+    box-shadow: 0 0 6px rgba(94, 170, 255, 0.4);
+}
+.orbit-particle-3 {
+    bottom: -14px; left: 30%;
+    animation: particleFloat 4s ease-in-out 1s infinite;
+    opacity: 0.4;
+    width: 2px; height: 2px;
 }
 
 @keyframes orbitPulse {
@@ -398,12 +465,80 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     0%, 100% { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px rgba(57, 255, 20, 0.15); }
     50% { box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(57, 255, 20, 0.25); }
 }
+@keyframes orbitSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes particleOrbit1 {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+@keyframes particleFloat {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-6px); opacity: 0.8; }
+}
+
+/* ---- Landing Features ---- */
+.landing-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+.feature-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all var(--transition);
+}
+.feature-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-3);
+    transform: translateY(-1px);
+}
+.feature-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.feature-text {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-2);
+    letter-spacing: 0.03em;
+    line-height: 1.35;
+}
+
+/* ---- Hidden Login Panel ---- */
+.login-panel {
+    margin-bottom: 32px;
+    padding: 28px;
+    background: var(--bg-1);
+    border: 1px solid var(--border-active);
+    border-radius: var(--radius);
+    box-shadow: 0 0 30px rgba(57, 255, 20, 0.06), var(--shadow);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: top center;
+}
+.login-panel.hidden {
+    display: none;
+}
+.login-panel.reveal {
+    animation: panelReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes panelReveal {
+    from { opacity: 0; transform: scaleY(0.85) translateY(-10px); }
+    to { opacity: 1; transform: scaleY(1) translateY(0); }
+}
 
 .login-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-bottom: 24px;
 }
 
 .login-footer {
@@ -412,6 +547,91 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     font-size: 0.68rem;
     color: var(--text-3);
     letter-spacing: 0.1em;
+}
+
+/* ---- Landing Footer ---- */
+.landing-footer {
+    text-align: center;
+    padding-top: 8px;
+}
+.landing-footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.landing-github-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-2);
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    letter-spacing: 0.04em;
+}
+.landing-github-link svg {
+    opacity: 0.7;
+    transition: opacity var(--transition);
+}
+.landing-github-link:hover {
+    color: var(--text-1);
+    border-color: var(--border-hover);
+    background: var(--bg-2);
+}
+.landing-github-link:hover svg {
+    opacity: 1;
+}
+.landing-separator {
+    color: var(--text-3);
+    font-size: 0.7rem;
+}
+.landing-license {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-3);
+    letter-spacing: 0.06em;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.landing-footer-meta {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-3);
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+}
+
+/* Single trigger (hidden easter egg) */
+.single-trigger {
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: color 0.2s ease;
+}
+.single-trigger:hover {
+    color: var(--text-2);
+}
+.single-trigger.pulse {
+    color: var(--accent-text);
+    animation: singlePulse 0.25s ease;
+}
+@keyframes singlePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ---- Responsive landing ---- */
+@media (max-width: 480px) {
+    .landing-title { font-size: 2rem; }
+    .landing-features { grid-template-columns: 1fr; }
+    .landing-container { max-width: 100%; }
 }
 
 /* Protected file info */
@@ -430,6 +650,30 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     font-family: var(--font-mono);
     font-size: 0.85rem;
     color: var(--text-1);
+}
+
+/* Password prompt page (protected files) */
+.login-container {
+    width: 100%;
+    max-width: 380px;
+    animation: fadeInUp 0.5s ease;
+}
+.login-brand {
+    text-align: center;
+    margin-bottom: 36px;
+}
+.brand-title {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+.login-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    color: var(--text-3);
+    text-transform: uppercase;
 }
 
 @keyframes fadeInUp {

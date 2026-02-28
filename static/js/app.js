@@ -268,5 +268,43 @@
         initUpload();
         initSearch();
         initKeyboardShortcuts();
+        initSingleTrigger();
     });
+
+    // ---- "Single" Easter Egg: click 5 times to reveal login ----
+    function initSingleTrigger() {
+        var trigger = document.getElementById('single-trigger');
+        var panel = document.getElementById('login-panel');
+        if (!trigger || !panel) return;
+
+        var clickCount = 0;
+        var resetTimer = null;
+
+        trigger.addEventListener('click', function () {
+            clickCount++;
+
+            // Visual pulse feedback
+            trigger.classList.remove('pulse');
+            void trigger.offsetWidth; // force reflow
+            trigger.classList.add('pulse');
+
+            // Reset counter if no click within 2 seconds
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(function () {
+                clickCount = 0;
+            }, 2000);
+
+            if (clickCount >= 5) {
+                clickCount = 0;
+                clearTimeout(resetTimer);
+                panel.classList.remove('hidden');
+                panel.classList.add('reveal');
+                // Focus the password input after animation
+                setTimeout(function () {
+                    var pw = document.getElementById('password');
+                    if (pw) pw.focus();
+                }, 350);
+            }
+        });
+    }
 })();
