@@ -12,6 +12,7 @@ import (
 	"github.com/jere-mie/fileorbit/internal/database"
 	"github.com/jere-mie/fileorbit/internal/handlers"
 	"github.com/jere-mie/fileorbit/internal/middleware"
+	"github.com/joho/godotenv"
 )
 
 //go:embed templates/*
@@ -24,6 +25,9 @@ var staticFS embed.FS
 var version string
 
 func main() {
+	// Load .env file if present (errors are ignored so the app works without one)
+	_ = godotenv.Load()
+
 	cfg := config.Load()
 
 	db, err := database.Connect(cfg.DatabasePath)

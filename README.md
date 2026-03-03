@@ -100,7 +100,6 @@ All configuration is done via environment variables (or a `.env` file):
 | `PORT` | `8080` | Server port |
 | `HOST` | `localhost` | Server bind address |
 | `DATABASE_PATH` | `openly.db` | Path to SQLite database file |
-| `BASE_URL` | `http://localhost:8080` | Public base URL for generated short links |
 
 ## License
 

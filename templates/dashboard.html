@@ -51,7 +51,7 @@
                         <div class="input-group">
                             <label for="custom-url">CUSTOM URL</label>
                             <div class="input-with-prefix">
-                                <span class="input-prefix">{{.BaseURL}}/</span>
+                                <span class="input-prefix"></span>
                                 <input type="text" id="custom-url" name="custom_url" placeholder="auto-generated">
                             </div>
                         </div>
@@ -106,10 +106,15 @@
                         </div>
                     </div>
                     <div class="file-url-row">
-                        <code class="file-url-text" title="{{$.BaseURL}}/{{.CustomURL}}">{{truncate .CustomURL 28}}</code>
-                        <button class="btn-icon" onclick="copyToClipboard('{{$.BaseURL}}/{{.CustomURL}}')" title="Copy link">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                        </button>
+                        <code class="file-url-text">/{{truncate .CustomURL 27}}</code>
+                        <div class="file-url-actions">
+                            <button class="btn-icon" onclick="copyToClipboard(window.location.origin + '/{{.CustomURL}}')" title="Copy link">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            </button>
+                            <a class="btn-icon" href="/{{.CustomURL}}" target="_blank" rel="noopener noreferrer" title="Open in new tab">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
                     </div>
                     <div class="file-card-actions">
                         <a href="/dashboard/files/{{.ID}}/analytics" class="btn btn-xs btn-ghost">Analytics</a>

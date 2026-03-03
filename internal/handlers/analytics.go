@@ -25,7 +25,6 @@ type AnalyticsData struct {
 	Events    []models.AnalyticsEvent
 	Daily     []DailyCount
 	Referrers []ReferrerCount
-	BaseURL   string
 }
 
 // FileAnalytics renders the analytics page for a specific file.
@@ -70,6 +69,5 @@ func (a *App) FileAnalytics(w http.ResponseWriter, r *http.Request) {
 		Events:    events,
 		Daily:     daily,
 		Referrers: referrers,
-		BaseURL:   a.Config.BaseURL,
 	})
 }

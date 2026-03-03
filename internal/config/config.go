@@ -13,7 +13,6 @@ type Config struct {
 	SessionSecret string
 	DatabasePath  string
 	MaxFileSize   int64
-	BaseURL       string
 }
 
 // Load reads configuration from environment variables with sensible defaults.
@@ -24,7 +23,6 @@ func Load() *Config {
 		AdminPassword: getEnv("ADMIN_PASSWORD", "admin"),
 		SessionSecret: getEnv("SESSION_SECRET", "change-me-to-a-random-secret"),
 		DatabasePath:  getEnv("DATABASE_PATH", "fileorbit.db"),
-		BaseURL:       getEnv("BASE_URL", "http://localhost:8080"),
 	}
 
 	maxSize := getEnv("MAX_FILE_SIZE", "104857600")

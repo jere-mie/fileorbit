@@ -22,7 +22,6 @@ type DashboardData struct {
 	Search      string
 	Success     string
 	Error       string
-	BaseURL     string
 	MaxFileSize int64
 }
 
@@ -31,7 +30,6 @@ type EditData struct {
 	File    models.File
 	Error   string
 	Success string
-	BaseURL string
 }
 
 const fileListQuery = `SELECT id, filename, original_name, custom_url, content_type, size,
@@ -63,7 +61,6 @@ func (a *App) Dashboard(w http.ResponseWriter, r *http.Request) {
 	a.render(w, "dashboard", DashboardData{
 		Files:       files,
 		Success:     success,
-		BaseURL:     a.Config.BaseURL,
 		MaxFileSize: a.Config.MaxFileSize,
 	})
 }
@@ -170,8 +167,7 @@ func (a *App) EditFilePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	a.render(w, "edit", EditData{
-		File:    file,
-		BaseURL: a.Config.BaseURL,
+		File: file,
 	})
 }
 
@@ -206,11 +202,11 @@ func (a *App) EditFileHandler(w http.ResponseWriter, r *http.Request) {
 	if customURL != file.CustomURL {
 		var count int
 		if err := a.DB.Get(&count, "SELECT COUNT(*) FROM files WHERE custom_url = ? AND id != ?", customURL, file.ID); err != nil {
-			a.render(w, "edit", EditData{File: file, Error: "Database error", BaseURL: a.Config.BaseURL})
+			a.render(w, "edit", EditData{File: file, Error: "Database error"})
 			return
 		}
 		if count > 0 {
-			a.render(w, "edit", EditData{File: file, Error: "Custom URL already in use", BaseURL: a.Config.BaseURL})
+			a.render(w, "edit", EditData{File: file, Error: "Custom URL already in use"})
 			return
 		}
 	}
@@ -222,7 +218,7 @@ func (a *App) EditFileHandler(w http.ResponseWriter, r *http.Request) {
 	} else if password != "" {
 		hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err != nil {
-			a.render(w, "edit", EditData{File: file, Error: "Failed to process password", BaseURL: a.Config.BaseURL})
+			a.render(w, "edit", EditData{File: file, Error: "Failed to process password"})
 			return
 		}
 		passwordHash = sql.NullString{String: string(hash), Valid: true}
@@ -248,7 +244,7 @@ func (a *App) EditFileHandler(w http.ResponseWriter, r *http.Request) {
 		filename, customURL, description, passwordHash, expiresAt, file.ID,
 	)
 	if err != nil {
-		a.render(w, "edit", EditData{File: file, Error: "Failed to update file", BaseURL: a.Config.BaseURL})
+		a.render(w, "edit", EditData{File: file, Error: "Failed to update file"})
 		return
 	}
 
@@ -300,7 +296,6 @@ func (a *App) dashboardWithError(w http.ResponseWriter, errMsg string) {
 	a.render(w, "dashboard", DashboardData{
 		Files:       files,
 		Error:       errMsg,
-		BaseURL:     a.Config.BaseURL,
 		MaxFileSize: a.Config.MaxFileSize,
 	})
 }

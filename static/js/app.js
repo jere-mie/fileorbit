@@ -307,4 +307,16 @@
             }
         });
     }
+
+    // ---- Base URL (derived from window.location.origin) ----
+    document.querySelectorAll('.input-prefix').forEach(function (el) {
+        el.textContent = window.location.origin + '/';
+    });
+
+    document.querySelectorAll('.file-url-text').forEach(function (el) {
+        var card = el.closest('.file-card');
+        if (card && card.dataset.url) {
+            el.title = window.location.origin + '/' + card.dataset.url;
+        }
+    });
 })();
